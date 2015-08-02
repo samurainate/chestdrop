@@ -1,5 +1,5 @@
 name: ChestDrop
-main: net.teammeyer.chestdrop.Main
+main: io.github.samurainate.chestdrop.ChestDropPlugin
 version: 1.0
 commands:
 softdepend: 

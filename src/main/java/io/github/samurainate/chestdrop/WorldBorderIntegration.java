@@ -12,24 +12,30 @@ public class WorldBorderIntegration {
 	private WorldBorder wbplugin;
 	private Random rand;
 
-	public WorldBorderIntegration(ChestDropConfig config, Plugin test) {
+	public WorldBorderIntegration(PluginConfig config, Plugin test) {
 		this.wbplugin = (WorldBorder) test;
 		this.rand = config.getRandom();
 	}
 
-	public double[] randomCoordWithinBordersOf(String worldname) {
+	public double[] randomCoordWithinBordersOf(String worldname, int maxRange) {
 		BorderData borderData = wbplugin.getWorldBorder(worldname);
 		if (borderData == null) {
 			return null;
 		}
-		double xmin = borderData.getX() - borderData.getRadiusX();
-		double xrng = 2f * borderData.getRadiusX();
-		double zmin = borderData.getZ() - borderData.getRadiusZ();
-		double zrng = 2f * borderData.getRadiusZ();
+		
+		/* enforce max range */
+		int xrad = borderData.getRadiusX();
+		xrad = xrad>maxRange?maxRange:xrad;
+		int zrad = borderData.getRadiusZ();
+		zrad = zrad>maxRange?maxRange:zrad;
+		
+		/* get a uniform random coordinate inside the world border */
+		double xmin = borderData.getX() - xrad;
+		double zmin = borderData.getZ() - zrad;
 		double[] coord = new double[2];
 		do {
-			coord[0] = rand.nextDouble() * xrng + xmin;
-			coord[1] = rand.nextDouble() * zrng + zmin;
+			coord[0] = rand.nextDouble() * 2f * xrad + xmin;
+			coord[1] = rand.nextDouble() * 2f * zrad + zmin;
 		} while (!borderData.insideBorder(coord[0], coord[1]));
 
 		return coord;
