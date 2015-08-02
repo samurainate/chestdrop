@@ -2,5 +2,18 @@ name: ChestDrop
 main: io.github.samurainate.chestdrop.ChestDropPlugin
 version: 1.0
 commands:
+    dropchest:
+        description: Drop a chest in the world
+        usage: /<command>
+        permission: <plugin name>.basic
+        permission-message: You don't have <permission>
+permissions:
+    chestdrop.*:
+        description: gives access to all <plugin name> commands
+        children:
+            chestdrop.dropchest: true
+    chestdrop.dropchest:
+        description: allows the use of the dropchest command
+        default: op
 softdepend: 
   - WorldBorder
