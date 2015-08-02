@@ -1,0 +1,6 @@
+name: ChestDrop
+main: net.teammeyer.chestdrop.Main
+version: 1.0
+commands:
+softdepend: 
+  - WorldBorder
