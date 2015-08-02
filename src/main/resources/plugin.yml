@@ -3,8 +3,8 @@ main: io.github.samurainate.chestdrop.ChestDropPlugin
 version: 1.0
 commands:
     dropchest:
-        description: Drop a chest in the world
-        usage: /<command>
+        description: Drops chests in the world
+        usage: /<command> [count]
         permission: <plugin name>.basic
         permission-message: You don't have <permission>
 permissions:

@@ -1,5 +1,6 @@
 package io.github.samurainate.chestdrop;
 
+import java.text.ParseException;
 import java.util.logging.Logger;
 
 import org.bukkit.command.Command;
@@ -33,21 +34,29 @@ public class ChestDropPlugin extends JavaPlugin {
 
 		/* Schedule drops */
 		Utils.scheduleTasks(pluginConfig);
-		
+
 		/* Announce ready */
 		getServer().getLogger().info("[ChestDrop] Ready");
 
 	}
-	
+
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-		if (cmd.getName().equalsIgnoreCase("dropchest")) { 
+		if (cmd.getName().equalsIgnoreCase("dropchest")) {
 			if (sender instanceof Player && sender.hasPermission("chestdrop.dropchest")) {
-				Utils.dropChest(pluginConfig, ((Player)sender).getWorld().getName());
+				int count = 1;
+				if (args.length >= 1)
+					try {
+						count = Integer.parseInt(args[0]);
+					} catch (NumberFormatException e) {
+						count = 1;
+					}
+				for (int i = 0; i < count; i++)
+					Utils.dropChest(pluginConfig, ((Player) sender).getWorld().getName());
 				return true;
 			}
-		} 
-		return false; 
+		}
+		return false;
 	}
 
 }
