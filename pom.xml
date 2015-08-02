@@ -4,11 +4,17 @@
 
   <groupId>io.github.samurainate</groupId>
   <artifactId>chestdrop</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>1.0-alpha</version>
   <packaging>jar</packaging>
 
   <name>chestdrop</name>
-  <url>http://maven.apache.org</url>
+  <url>http://github.com/samurainate/chestdrop</url>
+
+  <issueManagement>
+    <system>GitHub</system>
+    <url>http://github.com/samurainate/chestdrop/issues</url>
+  </issueManagement>
+
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -20,7 +26,11 @@
 			<url>https://hub.spigotmc.org/nexus/content/groups/public/</url>
 		</repository>
 	</repositories>
-  
+
+  <build>
+    <defaultGoal>clean install</defaultGoal>
+  </build>
+
   <dependencies>
     <dependency>
       <groupId>junit</groupId>
