@@ -47,16 +47,17 @@ public class PluginConfig {
 		/* load trades */
 		trades = new HashMap<String, Trade>();
 		ConfigurationSection tradesConfig = configFile.getConfigurationSection("trades");
-		for (String key : tradesConfig.getKeys(false)) {
-			server.getLogger().info("[ChestDrop] Load trade '" + key + "'");
-			ConfigurationSection tradeConfig = tradesConfig.getConfigurationSection(key);
-			ItemStack item = tradeConfig.getItemStack("item");
-			int cost = tradeConfig.getInt("cost");
-			trades.put(key, new Trade(key, item, cost));
+		if (tradesConfig != null) {
+			for (String key : tradesConfig.getKeys(false)) {
+				server.getLogger().info("[ChestDrop] Load trade '" + key + "'");
+				ConfigurationSection tradeConfig = tradesConfig.getConfigurationSection(key);
+				ItemStack item = tradeConfig.getItemStack("item");
+				int cost = tradeConfig.getInt("cost");
+				trades.put(key, new Trade(key, item, cost));
+			}
 		}
-
 		/* if no trades set up, add example trade */
-		if (!configFile.contains("trades")) {
+		else {
 			ItemStack xpBottles = new ItemStack(Material.EXP_BOTTLE, 10);
 			configFile.set("trades.example.item", xpBottles);
 			configFile.set("trades.example.cost", 1);

@@ -4,6 +4,7 @@ import java.util.logging.Logger;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -70,8 +71,10 @@ public class ChestDropPlugin extends JavaPlugin implements Listener {
 			if (sender instanceof Player && sender.hasPermission("chestdrop.addtrade") && (args.length >= 1)) {
 				try {
 					int cost = Integer.parseInt(args[0]);
-					pluginConfig.registerTrade(
-							new Trade("t" + System.currentTimeMillis(), ((Player) sender).getItemInHand(), cost));
+					ItemStack itemInHand = ((Player) sender).getItemInHand();
+					pluginConfig.registerTrade(new Trade("t" + System.currentTimeMillis(), itemInHand, cost));
+					sender.sendMessage(String.format("Trade created: %d %s for %d Hidden Gems", itemInHand.getAmount(),
+							itemInHand.toString(), cost));
 					return true;
 				} catch (NumberFormatException e) {
 					return false;
@@ -86,8 +89,7 @@ public class ChestDropPlugin extends JavaPlugin implements Listener {
 		Player p = (Player) e.getWhoClicked();
 
 		if (e.getInventory().getTitle().contains("Trade Hidden Gems")) {
-			e.setCancelled(true); // Cancel the event so they can't take items
-									// out of the GUI
+			e.setCancelled(true);
 
 			ItemStack item = e.getCurrentItem();
 			if (item == null || item.getItemMeta() == null || item.getItemMeta().getLore() == null
@@ -96,19 +98,15 @@ public class ChestDropPlugin extends JavaPlugin implements Listener {
 			} else {
 				String tradeName = item.getItemMeta().getLore().get(1);
 				Trade trade = pluginConfig.getTrade(tradeName);
-				if (trade==null)return;
+				if (trade == null)
+					return;
 				int gems = Utils.gemCount(p);
 				if (gems >= trade.getCost()) {
-					int slot = p.getInventory().firstEmpty();
-					if (slot == -1 && gems > trade.getCost()) {
-						p.sendMessage("You don't have room for that");
+					if (Utils.executeTrade(p, trade)) {
+						p.sendMessage("Trade completed");
 					} else {
-						if (Utils.executeTrade(p, trade)) {
-							p.sendMessage("Trade completed");
-						} else {
-							p.closeInventory();
-							p.sendMessage("Trade failed");
-						}
+						p.closeInventory();
+						p.sendMessage("Trade failed");
 					}
 				} else {
 					p.sendMessage("You don't have enough Hidden Gems");

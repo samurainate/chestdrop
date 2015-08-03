@@ -54,7 +54,8 @@ public class Utils {
 		if (config.isWorldBorderEnabled()) {
 			// this returns null if no border enabled
 			drop = config.getWb().randomCoordWithinBordersOf(worldname, maxRange);
-			if (drop != null) return drop;
+			if (drop != null)
+				return drop;
 		}
 
 		// either no world border integration or no border defined
@@ -77,18 +78,18 @@ public class Utils {
 					new ChestDropTask(config, worldname), worldConfig.getDropInterval(), worldConfig.getDropInterval());
 		}
 	}
-	
+
 	public static boolean dropChest(PluginConfig config, String worldname) {
 		/* Get random drop coords */
 		double[] coords = Utils.getDrop(config, worldname);
-		
+
 		World world = config.getServer().getWorld(worldname);
-		if(world==null) {
+		if (world == null) {
 			return false;
 		}
 
 		/* Load drop chunk */
-		loadChunk(world, coords);
+		Chunk chunk = loadChunk(world, coords);
 
 		/* Drop to ground loop */
 		Block block = null;
@@ -102,18 +103,18 @@ public class Utils {
 			case STATIONARY_WATER:
 			case LEAVES:
 				continue;
-			/* shift so we don't land on or in trees */
+				/* shift so we don't land on or in trees */
 			case LOG:
 			case LOG_2:
 				boolean axis = config.getRandom().nextBoolean();
 				boolean direction = config.getRandom().nextBoolean();
-				int a=axis?0:1;
-				int d=direction?1:-1;
+				int a = axis ? 0 : 1;
+				int d = direction ? 1 : -1;
 				/* move one */
-				coords[a]+=d;
+				coords[a] += d;
 				/* start over */
-				loadChunk(world,coords);
-				y=world.getMaxHeight()+1;
+				chunk = loadChunk(world, coords);
+				y = world.getMaxHeight() + 1;
 				continue;
 			case LAVA:
 			case STATIONARY_LAVA:
@@ -130,11 +131,11 @@ public class Utils {
 		}
 
 		/* Place Chest with Marker */
-		block = world.getBlockAt((int) coords[0], y+3, (int) coords[1]);
+		block = world.getBlockAt((int) coords[0], y + 3, (int) coords[1]);
 		block.setType(Material.GLOWSTONE);
-		block = world.getBlockAt((int) coords[0], y+2, (int) coords[1]);
+		block = world.getBlockAt((int) coords[0], y + 2, (int) coords[1]);
 		block.setType(Material.FENCE);
-		block = world.getBlockAt((int) coords[0], y+1, (int) coords[1]);
+		block = world.getBlockAt((int) coords[0], y + 1, (int) coords[1]);
 		block.setType(Material.FENCE);
 		block = world.getBlockAt((int) coords[0], y, (int) coords[1]);
 		block.setType(Material.CHEST);
@@ -157,20 +158,21 @@ public class Utils {
 				String.format("Chest dropped at %1.0fX, %1.0fZ", coords[0], coords[1]));
 		return true;
 	}
-	
-	public static void loadChunk(World world, double[] coords) {
+
+	public static Chunk loadChunk(World world, double[] coords) {
 		Chunk chunk = world.getChunkAt((int) coords[0], (int) coords[1]);
 		if (!chunk.isLoaded()) {
 			chunk.load(true);
 		}
+		return chunk;
 	}
 
 	public static void displayTrades(PluginConfig pluginConfig, Player player) {
-		Inventory inv = pluginConfig.getServer().createInventory(null,27,"Trade Hidden Gems");
-		for(Trade trade : pluginConfig.getTrades()) {
+		Inventory inv = pluginConfig.getServer().createInventory(null, 27, "Trade " + "Hidden Gems");
+		for (Trade trade : pluginConfig.getTrades()) {
 			ItemStack item = trade.getItems().clone();
 			ItemMeta meta = item.getItemMeta();
-			meta.setLore(Arrays.asList("Trade for "+trade.getCost()+" Hidden Gems",trade.getName()));
+			meta.setLore(Arrays.asList("Trade for " + trade.getCost() + " " + "Hidden Gems", trade.getName()));
 			item.setItemMeta(meta);
 			inv.setItem(inv.firstEmpty(), item);
 		}
@@ -178,48 +180,52 @@ public class Utils {
 	}
 
 	public static int gemCount(Player p) {
-    	int gems = 0;
-    	Inventory inv = p.getInventory();
-    	HashMap<Integer, ? extends ItemStack> emeralds = inv.all(Material.EMERALD);
-    	for (Integer key:emeralds.keySet()) {
-    		/* check balance */
-    		ItemStack emerald = emeralds.get(key);
-    		if (emerald.getItemMeta().getDisplayName().equals("Hidden Gem"));
-    		gems+=emerald.getAmount();
-    	}
-    	return gems;
+		int gems = 0;
+		Inventory inv = p.getInventory();
+		HashMap<Integer, ? extends ItemStack> emeralds = inv.all(Material.EMERALD);
+		for (Integer key : emeralds.keySet()) {
+			/* check balance */
+			ItemStack emerald = emeralds.get(key);
+			if (isHiddenGem(emerald))
+				gems += emerald.getAmount();
+		}
+		return gems;
+	}
+
+	private static boolean isHiddenGem(ItemStack emerald) {
+		return emerald.hasItemMeta() && emerald.getItemMeta().hasDisplayName()
+				&& emerald.getItemMeta().getDisplayName().equals("Hidden Gem");
 	}
 
 	public static boolean executeTrade(Player p, Trade trade) {
 		int costToGo = trade.getCost();
-    	Inventory inv = p.getInventory();
+		Inventory inv = p.getInventory();
 		HashMap<Integer, ? extends ItemStack> emeralds = inv.all(Material.EMERALD);
-    	for (Integer key:emeralds.keySet()) {
-    		/* check balance */
-    		ItemStack emerald = emeralds.get(key);
-    		if (emerald.getItemMeta().getDisplayName().equals("Hidden Gem")) {
-    			if (emerald.getAmount()>costToGo) {
-    				emerald.setAmount(emerald.getAmount()-costToGo);
-    				costToGo=0;
-    			} else if (emerald.getAmount()==costToGo) {
-    				inv.setItem(key, null);
-    				costToGo=0;
-    			} else {
-    				costToGo-=emerald.getAmount();
-    				inv.setItem(key, null);
-    			}
-    		}
-    		if (costToGo==0) {
-    			HashMap<Integer, ItemStack> drops = inv.addItem(trade.getItems().clone());
-    			for (ItemStack stack: drops.values()) {
-    				p.getWorld().dropItem(p.getLocation(), stack);
-    			}
-    			p.updateInventory();
-    			return true;
-    		}
-    	}
-    	return false;
+		for (Integer key : emeralds.keySet()) {
+			/* check balance */
+			ItemStack emerald = emeralds.get(key);
+			if (isHiddenGem(emerald)) {
+				if (emerald.getAmount() > costToGo) {
+					emerald.setAmount(emerald.getAmount() - costToGo);
+					costToGo = 0;
+				} else if (emerald.getAmount() == costToGo) {
+					inv.setItem(key, null);
+					costToGo = 0;
+				} else {
+					costToGo -= emerald.getAmount();
+					inv.setItem(key, null);
+				}
+			}
+			if (costToGo == 0) {
+				HashMap<Integer, ItemStack> drops = inv.addItem(trade.getItems().clone());
+				for (ItemStack stack : drops.values()) {
+					p.getWorld().dropItem(p.getLocation(), stack);
+				}
+				p.updateInventory();
+				return true;
+			}
+		}
+		return false;
 	}
-
 
 }
