@@ -5,15 +5,32 @@ commands:
     dropchest:
         description: Drops chests in the world
         usage: /<command> [count]
-        permission: <plugin name>.basic
+        permission: chestdrop.dropchest
+        permission-message: You don't have <permission>
+    addtrade:
+        description: Adds a gem trade
+        usage: /<command> [gem cost]
+        permission: chestdrop.addtrade
+        permission-message: You don't have <permission>
+    tradegems:
+        description: Trade in Hidden Gems for items
+        usage: /<command>
+        permission: chestdrop.tradegems
         permission-message: You don't have <permission>
 permissions:
     chestdrop.*:
         description: gives access to all <plugin name> commands
         children:
-            chestdrop.dropchest: true
+            ChestDrop.dropchest: true
+            chestdrop.tradegems: true
     chestdrop.dropchest:
         description: allows the use of the dropchest command
         default: op
+    chestdrop.addtrade:
+        description: allows the use of the addtrade command
+        default: op
+    chestdrop.tradegems:
+        description: allows the use of the tradegems command
+        default: true
 softdepend: 
   - WorldBorder

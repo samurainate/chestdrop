@@ -1,5 +1,8 @@
 package io.github.samurainate.chestdrop;
 
+import java.util.Arrays;
+import java.util.HashMap;
+
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -161,5 +164,62 @@ public class Utils {
 			chunk.load(true);
 		}
 	}
+
+	public static void displayTrades(PluginConfig pluginConfig, Player player) {
+		Inventory inv = pluginConfig.getServer().createInventory(null,27,"Trade Hidden Gems");
+		for(Trade trade : pluginConfig.getTrades()) {
+			ItemStack item = trade.getItems().clone();
+			ItemMeta meta = item.getItemMeta();
+			meta.setLore(Arrays.asList("Trade for "+trade.getCost()+" Hidden Gems",trade.getName()));
+			item.setItemMeta(meta);
+			inv.setItem(inv.firstEmpty(), item);
+		}
+		player.openInventory(inv);
+	}
+
+	public static int gemCount(Player p) {
+    	int gems = 0;
+    	Inventory inv = p.getInventory();
+    	HashMap<Integer, ? extends ItemStack> emeralds = inv.all(Material.EMERALD);
+    	for (Integer key:emeralds.keySet()) {
+    		/* check balance */
+    		ItemStack emerald = emeralds.get(key);
+    		if (emerald.getItemMeta().getDisplayName().equals("Hidden Gem"));
+    		gems+=emerald.getAmount();
+    	}
+    	return gems;
+	}
+
+	public static boolean executeTrade(Player p, Trade trade) {
+		int costToGo = trade.getCost();
+    	Inventory inv = p.getInventory();
+		HashMap<Integer, ? extends ItemStack> emeralds = inv.all(Material.EMERALD);
+    	for (Integer key:emeralds.keySet()) {
+    		/* check balance */
+    		ItemStack emerald = emeralds.get(key);
+    		if (emerald.getItemMeta().getDisplayName().equals("Hidden Gem")) {
+    			if (emerald.getAmount()>costToGo) {
+    				emerald.setAmount(emerald.getAmount()-costToGo);
+    				costToGo=0;
+    			} else if (emerald.getAmount()==costToGo) {
+    				inv.setItem(key, null);
+    				costToGo=0;
+    			} else {
+    				costToGo-=emerald.getAmount();
+    				inv.setItem(key, null);
+    			}
+    		}
+    		if (costToGo==0) {
+    			HashMap<Integer, ItemStack> drops = inv.addItem(trade.getItems().clone());
+    			for (ItemStack stack: drops.values()) {
+    				p.getWorld().dropItem(p.getLocation(), stack);
+    			}
+    			p.updateInventory();
+    			return true;
+    		}
+    	}
+    	return false;
+	}
+
 
 }
