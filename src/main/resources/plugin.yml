@@ -21,7 +21,7 @@ permissions:
     chestdrop.*:
         description: gives access to all <plugin name> commands
         children:
-            ChestDrop.dropchest: true
+            chestdrop.dropchest: true
             chestdrop.tradegems: true
     chestdrop.dropchest:
         description: allows the use of the dropchest command
