@@ -24,12 +24,14 @@ public class PluginConfig {
 
 	private Server server;
 	private Plugin plugin;
+	private ChestDropItemFactory factory;
 
 	public PluginConfig(ChestDropPlugin plugin) {
 		this.plugin = plugin;
 		this.server = plugin.getServer();
 		this.rand = new Random();
 		this.configuredWorlds = new HashMap<String, WorldConfig>();
+		this.factory=new ChestDropItemFactory(this);
 		FileConfiguration configFile = plugin.getConfig();
 
 		/* initialize config with defaults for each world */
@@ -139,6 +141,10 @@ public class PluginConfig {
 
 	public Trade getTrade(String tradeName) {
 		return trades.get(tradeName);
+	}
+
+	public ChestDropItemFactory itemFactory() {
+		return this.factory;
 	}
 
 }

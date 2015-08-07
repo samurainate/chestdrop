@@ -144,14 +144,8 @@ public class Utils {
 		Chest chest = (Chest) block.getState();
 		Inventory in = chest.getBlockInventory();
 
-		/* Generate Treasure */
-		ItemStack gem = new ItemStack(Material.EMERALD, 1 + config.getRandom().nextInt(5));
-		ItemMeta meta = gem.getItemMeta();
-		meta.setDisplayName("Hidden Gem");
-		gem.setItemMeta(meta);
-
 		/* Put Treasure in Chest */
-		in.setItem(in.firstEmpty(), gem);
+		in.setItem(in.firstEmpty(), config.itemFactory().hiddenGem(1 + config.getRandom().nextInt(5)));
 
 		/* Notify players */
 		Utils.worldBroadcast(config.getServer(), worldname,

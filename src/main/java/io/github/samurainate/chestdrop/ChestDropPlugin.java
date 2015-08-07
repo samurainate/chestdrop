@@ -16,11 +16,15 @@ public class ChestDropPlugin extends JavaPlugin implements Listener {
 
 	private Logger logger;
 	private PluginConfig pluginConfig;
+	private ChestDropEvents listener;
 
 	@Override
 	public void onDisable() {
 		super.onDisable();
 		getServer().getScheduler().cancelTasks(this);
+		listener=null;
+		/* Announce ready */
+		getServer().getLogger().info("[ChestDrop] Disabled");
 	}
 
 	@Override
@@ -29,8 +33,7 @@ public class ChestDropPlugin extends JavaPlugin implements Listener {
 		logger = getServer().getLogger();
 
 		/* Load plugin config */
-		PluginConfig pluginConfig = new PluginConfig(this);
-		this.pluginConfig = pluginConfig;
+		this.pluginConfig = new PluginConfig(this);
 
 		/* Announce WorldBorder integration */
 		if (pluginConfig.isWorldBorderEnabled())
@@ -40,79 +43,26 @@ public class ChestDropPlugin extends JavaPlugin implements Listener {
 		Utils.scheduleTasks(pluginConfig);
 
 		/* Register as event handler */
-		getServer().getPluginManager().registerEvents(this, this);
+		getServer().getPluginManager().registerEvents(new ChestDropEvents(pluginConfig), this);
 
 		/* Announce ready */
-		getServer().getLogger().info("[ChestDrop] Ready");
+		getServer().getLogger().info("[ChestDrop] Enabled");
 
 	}
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+		PluginConfig pluginConfig = this.pluginConfig;
 		if (cmd.getName().equalsIgnoreCase("dropchest")) {
-			if (sender instanceof Player && sender.hasPermission("chestdrop.dropchest")) {
-				int count = 1;
-				if (args.length >= 1)
-					try {
-						count = Integer.parseInt(args[0]);
-					} catch (NumberFormatException e) {
-						count = 1;
-					}
-				for (int i = 0; i < count; i++)
-					Utils.dropChest(pluginConfig, ((Player) sender).getWorld().getName());
-				return true;
-			}
+			ChestDropCommands.dropChest(sender, args, pluginConfig);
 		} else if (cmd.getName().equalsIgnoreCase("tradegems")) {
-			if (sender instanceof Player && sender.hasPermission("chestdrop.tradegems")) {
-				Utils.displayTrades(pluginConfig, (Player) sender);
-				return true;
-			}
+			ChestDropCommands.openTradeUI(sender, pluginConfig);
 		} else if (cmd.getName().equalsIgnoreCase("addtrade")) {
-			if (sender instanceof Player && sender.hasPermission("chestdrop.addtrade") && (args.length >= 1)) {
-				try {
-					int cost = Integer.parseInt(args[0]);
-					ItemStack itemInHand = ((Player) sender).getItemInHand();
-					pluginConfig.registerTrade(new Trade("t" + System.currentTimeMillis(), itemInHand, cost));
-					sender.sendMessage(String.format("Trade created: %d %s for %d Hidden Gems", itemInHand.getAmount(),
-							itemInHand.toString(), cost));
-					return true;
-				} catch (NumberFormatException e) {
-					return false;
-				}
-			}
+			ChestDropCommands.addTrade(sender, args, pluginConfig);
+		} else if (cmd.getName().equalsIgnoreCase("givegems")) {
+			ChestDropCommands.addTrade(sender, args, pluginConfig);
 		}
 		return false;
 	}
 
-	@EventHandler
-	public void InventoryClick(InventoryClickEvent e) {
-		Player p = (Player) e.getWhoClicked();
-
-		if (e.getInventory().getTitle().contains("Trade Hidden Gems")) {
-			e.setCancelled(true);
-
-			ItemStack item = e.getCurrentItem();
-			if (item == null || item.getItemMeta() == null || item.getItemMeta().getLore() == null
-					|| item.getItemMeta().getLore().size() < 2) {
-				return;
-			} else {
-				String tradeName = item.getItemMeta().getLore().get(1);
-				Trade trade = pluginConfig.getTrade(tradeName);
-				if (trade == null)
-					return;
-				int gems = Utils.gemCount(p);
-				if (gems >= trade.getCost()) {
-					if (Utils.executeTrade(p, trade)) {
-						p.sendMessage("Trade completed");
-					} else {
-						p.closeInventory();
-						p.sendMessage("Trade failed");
-					}
-				} else {
-					p.sendMessage("You don't have enough Hidden Gems");
-				}
-
-			}
-		}
-	}
 }

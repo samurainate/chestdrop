@@ -17,17 +17,26 @@ commands:
         usage: /<command>
         permission: chestdrop.tradegems
         permission-message: You don't have <permission>
+    givegems:
+        description: Give Hidden Gems to a player
+        usage: /<command> [count] [player]
+        permission: chestdrop.givegems
+        permission-message: You don't have <permission>
 permissions:
     chestdrop.*:
         description: gives access to all <plugin name> commands
         children:
             chestdrop.dropchest: true
             chestdrop.tradegems: true
+            chestdrop.givegems: true
     chestdrop.dropchest:
         description: allows the use of the dropchest command
         default: op
     chestdrop.addtrade:
         description: allows the use of the addtrade command
+        default: op
+    chestdrop.givegems:
+        description: allows the use of the givegems command
         default: op
     chestdrop.tradegems:
         description: allows the use of the tradegems command
