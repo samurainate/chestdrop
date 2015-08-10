@@ -2,7 +2,6 @@ package io.github.samurainate.chestdrop;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 
@@ -145,6 +144,13 @@ public class PluginConfig {
 
 	public ChestDropItemFactory itemFactory() {
 		return this.factory;
+	}
+
+	public void removeTrade(String tradeName) {
+		FileConfiguration configFile = plugin.getConfig();
+		configFile.set("trades."+tradeName,null);
+		plugin.saveConfig();
+		trades.remove(tradeName);
 	}
 
 }

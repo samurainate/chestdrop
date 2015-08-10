@@ -1,5 +1,6 @@
 package io.github.samurainate.chestdrop;
 
+import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -11,6 +12,10 @@ public class ChestDropCommands {
 			try {
 				int cost = Integer.parseInt(args[0]);
 				ItemStack itemInHand = ((Player) sender).getItemInHand();
+				if (itemInHand.getType()==Material.AIR) {
+					sender.sendMessage("You aren't holding an item!");
+					return true;
+				}
 				pluginConfig.registerTrade(new Trade("t" + System.currentTimeMillis(), itemInHand, cost));
 				sender.sendMessage(String.format("Trade created: %d %s for %d Hidden Gems", itemInHand.getAmount(),
 						itemInHand.toString(), cost));
@@ -18,8 +23,10 @@ public class ChestDropCommands {
 			} catch (NumberFormatException e) {
 				return false;
 			}
+		} else {
+			sender.sendMessage("This command is only usable by players");
+			return true;
 		}
-		return false;
 	}
 
 	public static boolean openTradeUI(CommandSender sender, PluginConfig pluginConfig) {
@@ -33,14 +40,44 @@ public class ChestDropCommands {
 	public static boolean dropChest(CommandSender sender, String[] args, PluginConfig pluginConfig) {
 		if (sender instanceof Player && sender.hasPermission("chestdrop.dropchest")) {
 			int count = 1;
+			if (args.length >= 1) {
+				try {
+					count = Integer.parseInt(args[0]);
+				} catch (NumberFormatException e) {
+					;
+				}
+			}
+			for (int i = 0; i < count; i++)
+				Utils.dropChest(pluginConfig, ((Player) sender).getWorld().getName());
+			return true;
+		}
+		return false;
+	}
+
+	public static boolean giveGems(CommandSender sender, String[] args, PluginConfig pluginConfig) {
+		if (sender instanceof Player && sender.hasPermission("chestdrop.givegems")) {
+			/* Default 1 gem to sender */
+			int count = 1;
+			Player player = (Player) sender;
 			if (args.length >= 1)
 				try {
 					count = Integer.parseInt(args[0]);
 				} catch (NumberFormatException e) {
-					count = 1;
+					return false;
 				}
-			for (int i = 0; i < count; i++)
-				Utils.dropChest(pluginConfig, ((Player) sender).getWorld().getName());
+			if (args.length >= 2) {
+				for (int i = 1; i < args.length; i++) {
+					player = pluginConfig.getServer().getPlayer(args[i]);
+					if (player == null) {
+						sender.sendMessage("Player not found: " + args[i]);
+					} else {
+						Utils.giveItem(player, pluginConfig.itemFactory().hiddenGem(count));
+						sender.sendMessage("Gave "+count+" Hidden Gems to " + args[i]);
+					}
+				}
+			} else {
+
+			}
 			return true;
 		}
 		return false;

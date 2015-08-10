@@ -8,6 +8,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 public class ChestDropItemFactory {
 
+	@SuppressWarnings("unused")
 	private PluginConfig config;
 	private ItemStack gem;
 
@@ -16,7 +17,7 @@ public class ChestDropItemFactory {
 		ItemStack gem = new ItemStack(Material.EMERALD, 1);
 		ItemMeta meta = gem.getItemMeta();
 		meta.setDisplayName("Hidden Gem");
-		meta.setLore(Arrays.asList("Trade these in for valuable items", "with the /tradegems command"));
+		meta.setLore(Arrays.asList("Trade these in for valuable items", "with the /tradegems command.", "Found in chests around the world."));
 		gem.setItemMeta(meta);
 		this.gem = gem;
 	}

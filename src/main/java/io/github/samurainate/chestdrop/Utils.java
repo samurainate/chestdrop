@@ -89,7 +89,7 @@ public class Utils {
 		}
 
 		/* Load drop chunk */
-		Chunk chunk = loadChunk(world, coords);
+		loadChunk(world, coords);
 
 		/* Drop to ground loop */
 		Block block = null;
@@ -113,7 +113,7 @@ public class Utils {
 				/* move one */
 				coords[a] += d;
 				/* start over */
-				chunk = loadChunk(world, coords);
+				loadChunk(world, coords);
 				y = world.getMaxHeight() + 1;
 				continue;
 			case LAVA:
@@ -162,7 +162,7 @@ public class Utils {
 	}
 
 	public static void displayTrades(PluginConfig pluginConfig, Player player) {
-		Inventory inv = pluginConfig.getServer().createInventory(null, 27, "Trade " + "Hidden Gems");
+		Inventory inv = pluginConfig.getServer().createInventory(null, 27, "Trade Hidden Gems");
 		for (Trade trade : pluginConfig.getTrades()) {
 			ItemStack item = trade.getItems().clone();
 			ItemMeta meta = item.getItemMeta();
@@ -173,6 +173,17 @@ public class Utils {
 		player.openInventory(inv);
 	}
 
+	public static void manageTrades(PluginConfig pluginConfig, Player player) {
+		Inventory inv = pluginConfig.getServer().createInventory(null, 27, "Delete Hidden Gem Trades");
+		for (Trade trade : pluginConfig.getTrades()) {
+			ItemStack item = trade.getItems().clone();
+			ItemMeta meta = item.getItemMeta();
+			meta.setLore(Arrays.asList("Click to delete", trade.getName()));
+			item.setItemMeta(meta);
+			inv.setItem(inv.firstEmpty(), item);
+		}
+		player.openInventory(inv);
+	}
 	public static int gemCount(Player p) {
 		int gems = 0;
 		Inventory inv = p.getInventory();
@@ -188,7 +199,10 @@ public class Utils {
 
 	private static boolean isHiddenGem(ItemStack emerald) {
 		return emerald.hasItemMeta() && emerald.getItemMeta().hasDisplayName()
-				&& emerald.getItemMeta().getDisplayName().equals("Hidden Gem");
+				&& emerald.getItemMeta().getDisplayName().equals("Hidden Gem")
+				&& emerald.getItemMeta().hasLore()
+				&& emerald.getItemMeta().getLore().size()>2
+				&& emerald.getItemMeta().getLore().get(2).equals("Found in chests around the world.");
 	}
 
 	public static boolean executeTrade(Player p, Trade trade) {
@@ -211,15 +225,30 @@ public class Utils {
 				}
 			}
 			if (costToGo == 0) {
-				HashMap<Integer, ItemStack> drops = inv.addItem(trade.getItems().clone());
-				for (ItemStack stack : drops.values()) {
-					p.getWorld().dropItem(p.getLocation(), stack);
-				}
-				p.updateInventory();
+				ItemStack item = trade.getItems().clone();
+				giveItem(p, item);
 				return true;
 			}
 		}
 		return false;
+	}
+
+	public static void giveItem(Player p, ItemStack item) {
+		HashMap<Integer, ItemStack> drops = p.getInventory().addItem(item);
+		for (ItemStack stack : drops.values()) {
+			p.getWorld().dropItem(p.getLocation(), stack);
+		}
+		p.updateInventory();
+	}
+
+	public static void displayConfirmDelete(PluginConfig pluginConfig, Player p, ItemStack item) {
+		Inventory inv = pluginConfig.getServer().createInventory(null, 27, "Confirm Delete Trade?");
+		ItemStack ok = null;
+		ItemStack cancel = null;
+		//TODO: finish here
+		inv.setItem(2*9+2, ok);
+		inv.setItem(2*9+7, cancel);
+		p.openInventory(inv);
 	}
 
 }

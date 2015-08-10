@@ -1,23 +1,10 @@
 package io.github.samurainate.chestdrop;
 
-import java.util.logging.Logger;
-
-import org.bukkit.Chunk;
-import org.bukkit.Material;
-import org.bukkit.World;
-import org.bukkit.block.Block;
-import org.bukkit.block.Chest;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-
 public class ChestDropTask implements Runnable {
 
 	private PluginConfig config;
 	private String worldname;
-	private World world;
 	private WorldConfig worldConfig;
-	private Logger logger;
 
 	/**
 	 * @param config
@@ -27,10 +14,8 @@ public class ChestDropTask implements Runnable {
 	 */
 	public ChestDropTask(PluginConfig config, String worldname) {
 		this.config = config;
-		this.logger = config.getServer().getLogger();
 		this.worldname = worldname;
 		this.worldConfig = config.getWorldConfig(worldname);
-		this.world = config.getServer().getWorld(worldname);
 	}
 
 	public void run() {

@@ -19,7 +19,7 @@ commands:
         permission-message: You don't have <permission>
     givegems:
         description: Give Hidden Gems to a player
-        usage: /<command> [count] [player]
+        usage: /<command> [count] <players...>
         permission: chestdrop.givegems
         permission-message: You don't have <permission>
 permissions:
