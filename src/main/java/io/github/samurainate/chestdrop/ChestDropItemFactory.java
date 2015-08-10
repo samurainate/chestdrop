@@ -17,7 +17,7 @@ public class ChestDropItemFactory {
 		ItemStack gem = new ItemStack(Material.EMERALD, 1);
 		ItemMeta meta = gem.getItemMeta();
 		meta.setDisplayName("Hidden Gem");
-		meta.setLore(Arrays.asList("Trade these in for valuable items", "with the /tradegems command.", "Found in chests around the world."));
+		meta.setLore(Arrays.asList("Found in special chests around the world."));
 		gem.setItemMeta(meta);
 		this.gem = gem;
 	}
@@ -26,7 +26,7 @@ public class ChestDropItemFactory {
 		if (count < 1)
 			return null;
 		if (count > Material.EMERALD.getMaxStackSize())
-			count = 64;
+			count = Material.EMERALD.getMaxStackSize();
 		ItemStack gems = gem.clone();
 		gems.setAmount(count);
 		return gems;

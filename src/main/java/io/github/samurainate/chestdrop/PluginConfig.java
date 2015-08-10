@@ -49,13 +49,21 @@ public class PluginConfig {
 		trades = new HashMap<String, Trade>();
 		ConfigurationSection tradesConfig = configFile.getConfigurationSection("trades");
 		if (tradesConfig != null) {
+			String toDelete = null;
 			for (String key : tradesConfig.getKeys(false)) {
-				server.getLogger().info("[ChestDrop] Load trade '" + key + "'");
 				ConfigurationSection tradeConfig = tradesConfig.getConfigurationSection(key);
 				ItemStack item = tradeConfig.getItemStack("item");
+				/* fix edge case that shouldn't happen anymore */
+				if (item.getType()==Material.AIR) {
+					toDelete = key;
+					server.getLogger().info("[ChestDrop] Deleted AIR trade '" + key + "'");
+					continue;
+				}
 				int cost = tradeConfig.getInt("cost");
 				trades.put(key, new Trade(key, item, cost));
+				server.getLogger().info("[ChestDrop] Loaded trade '" + key + "'");
 			}
+			if (toDelete!=null) removeTrade(toDelete);
 		}
 		/* if no trades set up, add example trade */
 		else {

@@ -12,7 +12,7 @@ public class ChestDropCommands {
 			try {
 				int cost = Integer.parseInt(args[0]);
 				ItemStack itemInHand = ((Player) sender).getItemInHand();
-				if (itemInHand.getType()==Material.AIR) {
+				if (itemInHand.getType() == Material.AIR) {
 					sender.sendMessage("You aren't holding an item!");
 					return true;
 				}
@@ -59,24 +59,34 @@ public class ChestDropCommands {
 			/* Default 1 gem to sender */
 			int count = 1;
 			Player player = (Player) sender;
-			if (args.length >= 1)
+			if (args.length >= 2) {
 				try {
 					count = Integer.parseInt(args[0]);
 				} catch (NumberFormatException e) {
 					return false;
 				}
-			if (args.length >= 2) {
 				for (int i = 1; i < args.length; i++) {
-					player = pluginConfig.getServer().getPlayer(args[i]);
-					if (player == null) {
-						sender.sendMessage("Player not found: " + args[i]);
+					if (count <= 0) {
+						sender.sendMessage("Gave no Hidden Gems to " + args[i]);
 					} else {
-						Utils.giveItem(player, pluginConfig.itemFactory().hiddenGem(count));
-						sender.sendMessage("Gave "+count+" Hidden Gems to " + args[i]);
+						player = pluginConfig.getServer().getPlayer(args[i]);
+						if (player == null) {
+							sender.sendMessage("Player not found: " + args[i]);
+						} else {
+							int gemsToGo = count;
+							ItemStack gems;
+							while (gemsToGo > 0) {
+								gems = pluginConfig.itemFactory().hiddenGem(gemsToGo);
+								gemsToGo -= gems.getAmount();
+								Utils.giveItem(player, gems);
+								//sender.sendMessage("Gave " + gems.getAmount() + " Hidden Gems to " + args[i]);
+							}
+							sender.sendMessage("Gave " + count + " Hidden Gems to " + args[i]);
+						}
 					}
 				}
 			} else {
-
+				return false;
 			}
 			return true;
 		}

@@ -201,8 +201,8 @@ public class Utils {
 		return emerald.hasItemMeta() && emerald.getItemMeta().hasDisplayName()
 				&& emerald.getItemMeta().getDisplayName().equals("Hidden Gem")
 				&& emerald.getItemMeta().hasLore()
-				&& emerald.getItemMeta().getLore().size()>2
-				&& emerald.getItemMeta().getLore().get(2).equals("Found in chests around the world.");
+				&& emerald.getItemMeta().getLore().size()>0
+				&& emerald.getItemMeta().getLore().get(0).equals("Found in special chests around the world.");
 	}
 
 	public static boolean executeTrade(Player p, Trade trade) {
