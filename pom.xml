@@ -4,7 +4,7 @@
 
   <groupId>io.github.samurainate</groupId>
   <artifactId>chestdrop</artifactId>
-  <version>1.1-SNAPSHOT</version>
+  <version>1.0-alpha-2</version>
   <packaging>jar</packaging>
 
   <name>chestdrop</name>
@@ -41,7 +41,7 @@
     <dependency>
     	<groupId>org.spigotmc</groupId>
     	<artifactId>spigot-api</artifactId>
-    	<version>1.8.8-R0.1-SNAPSHOT</version>
+    	<version>[1.8.0,]</version>
     </dependency>
     <dependency>
     	<groupId>com.wimbli.WorldBorder</groupId>
