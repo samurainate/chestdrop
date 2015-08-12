@@ -4,7 +4,7 @@
 
   <groupId>io.github.samurainate</groupId>
   <artifactId>chestdrop</artifactId>
-  <version>1.0-alpha-2</version>
+  <version>1.0-alpha-3</version>
   <packaging>jar</packaging>
 
   <name>chestdrop</name>
@@ -39,9 +39,21 @@
       <scope>test</scope>
     </dependency>
     <dependency>
+      <groupId>org.powermock</groupId>
+      <artifactId>powermock-module-junit4</artifactId>
+      <version>1.6.2</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.powermock</groupId>
+      <artifactId>powermock-api-mockito</artifactId>
+      <version>1.6.2</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
     	<groupId>org.spigotmc</groupId>
     	<artifactId>spigot-api</artifactId>
-    	<version>[1.8.0,]</version>
+    	<version>[1.8,]</version>
     </dependency>
     <dependency>
     	<groupId>com.wimbli.WorldBorder</groupId>

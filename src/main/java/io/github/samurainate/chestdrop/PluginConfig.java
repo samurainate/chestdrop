@@ -23,15 +23,17 @@ public class PluginConfig {
 
 	private Server server;
 	private Plugin plugin;
-	private ChestDropItemFactory factory;
+	private GemModel gemModel;
 
 	public PluginConfig(ChestDropPlugin plugin) {
 		this.plugin = plugin;
 		this.server = plugin.getServer();
 		this.rand = new Random();
 		this.configuredWorlds = new HashMap<String, WorldConfig>();
-		this.factory=new ChestDropItemFactory(this);
 		FileConfiguration configFile = plugin.getConfig();
+
+		/* Gem Model default is basic */
+		configFile.addDefault("loreBasedGemModel", false);
 
 		/* initialize config with defaults for each world */
 		for (World world : plugin.getServer().getWorlds()) {
@@ -45,6 +47,11 @@ public class PluginConfig {
 		}
 		configFile.options().copyDefaults(true);
 
+		if (configFile.getBoolean("loreBasedGemModel")) {
+			this.gemModel = new LoreBasedGemModel();
+		} else {
+			this.gemModel = new BasicGemModel();
+		}
 		/* load trades */
 		trades = new HashMap<String, Trade>();
 		ConfigurationSection tradesConfig = configFile.getConfigurationSection("trades");
@@ -54,7 +61,7 @@ public class PluginConfig {
 				ConfigurationSection tradeConfig = tradesConfig.getConfigurationSection(key);
 				ItemStack item = tradeConfig.getItemStack("item");
 				/* fix edge case that shouldn't happen anymore */
-				if (item.getType()==Material.AIR) {
+				if (item.getType() == Material.AIR) {
 					toDelete = key;
 					server.getLogger().info("[ChestDrop] Deleted AIR trade '" + key + "'");
 					continue;
@@ -63,7 +70,8 @@ public class PluginConfig {
 				trades.put(key, new Trade(key, item, cost));
 				server.getLogger().info("[ChestDrop] Loaded trade '" + key + "'");
 			}
-			if (toDelete!=null) removeTrade(toDelete);
+			if (toDelete != null)
+				removeTrade(toDelete);
 		}
 		/* if no trades set up, add example trade */
 		else {
@@ -150,13 +158,13 @@ public class PluginConfig {
 		return trades.get(tradeName);
 	}
 
-	public ChestDropItemFactory itemFactory() {
-		return this.factory;
+	public GemModel gemModel() {
+		return this.gemModel;
 	}
 
 	public void removeTrade(String tradeName) {
 		FileConfiguration configFile = plugin.getConfig();
-		configFile.set("trades."+tradeName,null);
+		configFile.set("trades." + tradeName, null);
 		plugin.saveConfig();
 		trades.remove(tradeName);
 	}

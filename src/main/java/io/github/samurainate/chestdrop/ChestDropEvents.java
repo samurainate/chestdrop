@@ -78,9 +78,9 @@ public class ChestDropEvents implements Listener {
 			Trade trade = pluginConfig.getTrade(tradeName);
 			if (trade == null)
 				return;
-			int gems = Utils.gemCount(p);
+			int gems = Utils.gemCount(p,pluginConfig.gemModel());
 			if (gems >= trade.getCost()) {
-				if (Utils.executeTrade(p, trade)) {
+				if (Utils.executeTrade(p, trade,pluginConfig.gemModel())) {
 					p.sendMessage("Trade completed");
 				} else {
 					p.closeInventory();

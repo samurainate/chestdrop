@@ -76,7 +76,7 @@ public class ChestDropCommands {
 							int gemsToGo = count;
 							ItemStack gems;
 							while (gemsToGo > 0) {
-								gems = pluginConfig.itemFactory().hiddenGem(gemsToGo);
+								gems = pluginConfig.gemModel().hiddenGem(gemsToGo);
 								gemsToGo -= gems.getAmount();
 								Utils.giveItem(player, gems);
 								//sender.sendMessage("Gave " + gems.getAmount() + " Hidden Gems to " + args[i]);

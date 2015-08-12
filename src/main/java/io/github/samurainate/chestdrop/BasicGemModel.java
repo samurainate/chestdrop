@@ -6,14 +6,11 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-public class ChestDropItemFactory {
+public class BasicGemModel implements GemModel {
 
-	@SuppressWarnings("unused")
-	private PluginConfig config;
 	private ItemStack gem;
-
-	public ChestDropItemFactory(PluginConfig config) {
-		this.config = config;
+	
+	public BasicGemModel() {
 		ItemStack gem = new ItemStack(Material.EMERALD, 1);
 		ItemMeta meta = gem.getItemMeta();
 		meta.setDisplayName("Hidden Gem");
@@ -21,7 +18,7 @@ public class ChestDropItemFactory {
 		gem.setItemMeta(meta);
 		this.gem = gem;
 	}
-
+	@Override
 	public ItemStack hiddenGem(int count) {
 		if (count < 1)
 			return null;
@@ -31,4 +28,11 @@ public class ChestDropItemFactory {
 		gems.setAmount(count);
 		return gems;
 	}
+
+	@Override
+	public boolean isHiddenGem(ItemStack emerald) {
+		return emerald.hasItemMeta() && emerald.getItemMeta().hasDisplayName()
+				&& emerald.getItemMeta().getDisplayName().equals("Hidden Gem");
+	}
+
 }

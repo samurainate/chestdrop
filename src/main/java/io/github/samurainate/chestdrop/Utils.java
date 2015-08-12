@@ -16,7 +16,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 public class Utils {
-
+	
 	public static void worldBroadcast(Server server, String worldname, String format) {
 		World world = server.getWorld(worldname);
 		for (Player player : server.getOnlinePlayers()) {
@@ -145,7 +145,7 @@ public class Utils {
 		Inventory in = chest.getBlockInventory();
 
 		/* Put Treasure in Chest */
-		in.setItem(in.firstEmpty(), config.itemFactory().hiddenGem(1 + config.getRandom().nextInt(5)));
+		in.setItem(in.firstEmpty(), config.gemModel().hiddenGem(1 + config.getRandom().nextInt(5)));
 
 		/* Notify players */
 		Utils.worldBroadcast(config.getServer(), worldname,
@@ -184,35 +184,28 @@ public class Utils {
 		}
 		player.openInventory(inv);
 	}
-	public static int gemCount(Player p) {
+	public static int gemCount(Player p, GemModel gemModel) {
 		int gems = 0;
 		Inventory inv = p.getInventory();
 		HashMap<Integer, ? extends ItemStack> emeralds = inv.all(Material.EMERALD);
 		for (Integer key : emeralds.keySet()) {
 			/* check balance */
 			ItemStack emerald = emeralds.get(key);
-			if (isHiddenGem(emerald))
+			if (gemModel.isHiddenGem(emerald))
 				gems += emerald.getAmount();
 		}
 		return gems;
 	}
 
-	private static boolean isHiddenGem(ItemStack emerald) {
-		return emerald.hasItemMeta() && emerald.getItemMeta().hasDisplayName()
-				&& emerald.getItemMeta().getDisplayName().equals("Hidden Gem")
-				&& emerald.getItemMeta().hasLore()
-				&& emerald.getItemMeta().getLore().size()>0
-				&& emerald.getItemMeta().getLore().get(0).equals("Found in special chests around the world.");
-	}
 
-	public static boolean executeTrade(Player p, Trade trade) {
+	public static boolean executeTrade(Player p, Trade trade, GemModel gemModel) {
 		int costToGo = trade.getCost();
 		Inventory inv = p.getInventory();
 		HashMap<Integer, ? extends ItemStack> emeralds = inv.all(Material.EMERALD);
 		for (Integer key : emeralds.keySet()) {
 			/* check balance */
 			ItemStack emerald = emeralds.get(key);
-			if (isHiddenGem(emerald)) {
+			if (gemModel.isHiddenGem(emerald)) {
 				if (emerald.getAmount() > costToGo) {
 					emerald.setAmount(emerald.getAmount() - costToGo);
 					costToGo = 0;
