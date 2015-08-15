@@ -193,11 +193,11 @@ public class Utils {
 	}
 
 	public static void displayTrades(PluginConfig pluginConfig, Player player) {
-		Inventory inv = pluginConfig.getServer().createInventory(null, 27, "Trade Hidden Gems");
+		Inventory inv = pluginConfig.getServer().createInventory(null, 27, "Trade "+pluginConfig.gemModel().getName());
 		for (Trade trade : pluginConfig.getTrades()) {
 			ItemStack item = trade.getItems().clone();
 			ItemMeta meta = item.getItemMeta();
-			meta.setLore(Arrays.asList("Trade for " + trade.getCost() + " " + "Hidden Gems", trade.getName()));
+			meta.setLore(Arrays.asList("Trade for " + trade.getCost() + " " + pluginConfig.gemModel().getName(), trade.getName()));
 			item.setItemMeta(meta);
 			inv.setItem(inv.firstEmpty(), item);
 		}
@@ -205,7 +205,7 @@ public class Utils {
 	}
 
 	public static void manageTrades(PluginConfig pluginConfig, Player player) {
-		Inventory inv = pluginConfig.getServer().createInventory(null, 27, "Delete Hidden Gem Trades");
+		Inventory inv = pluginConfig.getServer().createInventory(null, 27, "Delete "+pluginConfig.gemModel().getName()+" Trades");
 		for (Trade trade : pluginConfig.getTrades()) {
 			ItemStack item = trade.getItems().clone();
 			ItemMeta meta = item.getItemMeta();

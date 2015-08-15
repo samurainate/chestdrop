@@ -17,7 +17,7 @@ public class ChestDropCommands {
 					return true;
 				}
 				pluginConfig.registerTrade(new Trade("t" + System.currentTimeMillis(), itemInHand, cost));
-				sender.sendMessage(String.format("Trade created: %d %s for %d Hidden Gems", itemInHand.getAmount(),
+				sender.sendMessage(String.format("Trade created: %d %s for %d "+pluginConfig.gemModel().getName(), itemInHand.getAmount(),
 						itemInHand.toString(), cost));
 				return true;
 			} catch (NumberFormatException e) {
@@ -67,7 +67,7 @@ public class ChestDropCommands {
 				}
 				for (int i = 1; i < args.length; i++) {
 					if (count <= 0) {
-						sender.sendMessage("Gave no Hidden Gems to " + args[i]);
+						sender.sendMessage("Gave no "+pluginConfig.gemModel().getName()+" to " + args[i]);
 					} else {
 						player = pluginConfig.getServer().getPlayer(args[i]);
 						if (player == null) {
@@ -79,9 +79,8 @@ public class ChestDropCommands {
 								gems = pluginConfig.gemModel().hiddenGem(gemsToGo);
 								gemsToGo -= gems.getAmount();
 								Utils.giveItem(player, gems);
-								//sender.sendMessage("Gave " + gems.getAmount() + " Hidden Gems to " + args[i]);
 							}
-							sender.sendMessage("Gave " + count + " Hidden Gems to " + args[i]);
+							sender.sendMessage("Gave " + count + " "+pluginConfig.gemModel().getName()+" to " + args[i]);
 						}
 					}
 				}

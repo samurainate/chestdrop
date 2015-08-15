@@ -1,6 +1,7 @@
 package io.github.samurainate.chestdrop;
 
 import java.util.Arrays;
+import java.util.List;
 
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -9,12 +10,16 @@ import org.bukkit.inventory.meta.ItemMeta;
 public class LoreBasedGemModel implements GemModel {
 
 	private ItemStack gem;
+	private String name;
+	private List<String> lore;
 
-	public LoreBasedGemModel() {
+	public LoreBasedGemModel(String name, List<String> lore) {
+		this.name=name;
+		this.lore=lore;
 		ItemStack gem = new ItemStack(Material.EMERALD, 1);
 		ItemMeta meta = gem.getItemMeta();
-		meta.setDisplayName("Hidden Gem");
-		meta.setLore(Arrays.asList("Found in special chests around the world."));
+		meta.setDisplayName(name);
+		meta.setLore(lore);
 		gem.setItemMeta(meta);
 		this.gem = gem;
 	}
@@ -39,9 +44,14 @@ public class LoreBasedGemModel implements GemModel {
 	@Override
 	public boolean isHiddenGem(ItemStack emerald) {
 		return emerald.hasItemMeta() && emerald.getItemMeta().hasDisplayName()
-				&& emerald.getItemMeta().getDisplayName().equals("Hidden Gem")
+				&& emerald.getItemMeta().getDisplayName().equals(name)
 				&& emerald.getItemMeta().hasLore()
 				&& emerald.getItemMeta().getLore().size()>0
-				&& emerald.getItemMeta().getLore().get(0).equals("Found in special chests around the world.");
+				&& emerald.getItemMeta().getLore().get(0).equals(lore.get(0));
+	}
+
+	@Override
+	public String getName() {
+		return name;
 	}
 }

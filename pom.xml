@@ -4,7 +4,7 @@
 
   <groupId>io.github.samurainate</groupId>
   <artifactId>chestdrop</artifactId>
-  <version>1.0-alpha-3</version>
+  <version>1.0-alpha-5</version>
   <packaging>jar</packaging>
 
   <name>chestdrop</name>

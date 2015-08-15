@@ -19,13 +19,13 @@ public class ChestDropEvents implements Listener {
 	public void InventoryClick(InventoryClickEvent e) {
 		Player p = (Player) e.getWhoClicked();
 
-		if (e.getInventory().getTitle().contains("Trade Hidden Gems")) {
+		if (e.getInventory().getTitle().contains("Trade "+pluginConfig.gemModel().getName())) {
 			tradeGems(e, p);
 			return;
-		} else if (e.getInventory().getTitle().contains("Delete Hidden Gem Trades")) {
+		} else if (e.getInventory().getTitle().contains("Delete "+pluginConfig.gemModel().getName()+" Trades")) {
 			deleteTrade(e, p);
 			return;
-		} else if (e.getInventory().getTitle().contains("Confirm Delete Gem Trade?")) {
+		} else if (e.getInventory().getTitle().contains("Confirm Delete "+pluginConfig.gemModel().getName()+" Trade?")) {
 			confirmDeleteTrade(e, p);
 			return;
 		}
@@ -87,7 +87,7 @@ public class ChestDropEvents implements Listener {
 					p.sendMessage("Trade failed");
 				}
 			} else {
-				p.sendMessage("You don't have enough Hidden Gems");
+				p.sendMessage("You don't have enough "+pluginConfig.gemModel().getName());
 			}
 
 		}

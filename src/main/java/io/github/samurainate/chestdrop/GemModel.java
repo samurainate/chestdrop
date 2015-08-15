@@ -8,4 +8,6 @@ public interface GemModel {
 
 	boolean isHiddenGem(ItemStack emerald);
 
+	String getName();
+
 }

@@ -1,6 +1,6 @@
 package io.github.samurainate.chestdrop;
 
-import java.util.Arrays;
+import java.util.List;
 
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -9,12 +9,14 @@ import org.bukkit.inventory.meta.ItemMeta;
 public class BasicGemModel implements GemModel {
 
 	private ItemStack gem;
+	private String name;
 	
-	public BasicGemModel() {
+	public BasicGemModel(String name, List<String> lore) {
+		this.name=name;
 		ItemStack gem = new ItemStack(Material.EMERALD, 1);
 		ItemMeta meta = gem.getItemMeta();
-		meta.setDisplayName("Hidden Gem");
-		meta.setLore(Arrays.asList("Found in special chests around the world."));
+		meta.setDisplayName(name);
+		meta.setLore(lore);
 		gem.setItemMeta(meta);
 		this.gem = gem;
 	}
@@ -32,7 +34,11 @@ public class BasicGemModel implements GemModel {
 	@Override
 	public boolean isHiddenGem(ItemStack emerald) {
 		return emerald.hasItemMeta() && emerald.getItemMeta().hasDisplayName()
-				&& emerald.getItemMeta().getDisplayName().equals("Hidden Gem");
+				&& emerald.getItemMeta().getDisplayName().equals(name);
+	}
+	@Override
+	public String getName() {
+		return name;
 	}
 
 }

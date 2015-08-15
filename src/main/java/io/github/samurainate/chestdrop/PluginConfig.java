@@ -1,7 +1,9 @@
 package io.github.samurainate.chestdrop;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
@@ -36,6 +38,8 @@ public class PluginConfig {
 
 		/* Gem Model default is basic */
 		configFile.addDefault("loreBasedGemModel", false);
+		configFile.addDefault("gem.Name", "Hidden Gem");
+		configFile.addDefault("gem.Lore", Arrays.asList("Found in special chests around the world."));
 
 		/* initialize config with defaults for each world */
 		for (World world : plugin.getServer().getWorlds()) {
@@ -49,10 +53,13 @@ public class PluginConfig {
 		}
 		configFile.options().copyDefaults(true);
 
+		/* Configure gems */
+		String name = configFile.getString("gem.Name");
+		List<String> lore = configFile.getStringList("gem.Lore");
 		if (configFile.getBoolean("loreBasedGemModel")) {
-			this.gemModel = new LoreBasedGemModel();
+			this.gemModel = new LoreBasedGemModel(name,lore);
 		} else {
-			this.gemModel = new BasicGemModel();
+			this.gemModel = new BasicGemModel(name,lore);
 		}
 		/* load trades */
 		trades = new HashMap<String, Trade>();
