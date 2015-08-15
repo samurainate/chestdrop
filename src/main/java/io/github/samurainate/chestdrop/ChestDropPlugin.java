@@ -31,6 +31,10 @@ public class ChestDropPlugin extends JavaPlugin implements Listener {
 		/* Announce WorldBorder integration */
 		if (pluginConfig.isWorldBorderEnabled())
 			logger.info("[ChestDrop] WorldBorder integration enabled");
+		
+		/* Announce Towny integration */
+		if (pluginConfig.isTownyEnabled())
+			logger.info("[ChestDrop] Towny integration enabled");
 
 		/* Schedule drops */
 		Utils.scheduleTasks(pluginConfig);

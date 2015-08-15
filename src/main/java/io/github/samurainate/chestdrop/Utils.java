@@ -16,7 +16,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 public class Utils {
-	
+
 	public static void worldBroadcast(Server server, String worldname, String format) {
 		World world = server.getWorld(worldname);
 		for (Player player : server.getOnlinePlayers()) {
@@ -50,22 +50,53 @@ public class Utils {
 		double[] drop = null;
 		WorldConfig worldConfig = config.getWorldConfig(worldname);
 		int maxRange = worldConfig.getMaxRangeForDrops();
+
 		// try world border method first
-		if (config.isWorldBorderEnabled()) {
-			// this returns null if no border enabled
-			drop = config.getWb().randomCoordWithinBordersOf(worldname, maxRange);
-			if (drop != null)
-				return drop;
+		if (config.isWorldBorderEnabled() && config.getWb().worldHasBorder(worldname)) {
+			if (config.isTownyEnabled()) {
+				/*
+				 * Try to get a wild spawn location but take whatever after 100
+				 * iterations
+				 */
+				for (int i = 0; i < 100; i++) {
+					drop = config.getWb().randomCoordWithinBordersOf(worldname, maxRange);
+					if (config.getTowny()
+							.isWild(new Location(config.getServer().getWorld(worldname), drop[0], 0, drop[1])))
+						break;
+				}
+			} else {
+				drop = config.getWb().randomCoordWithinBordersOf(worldname, maxRange);
+			}
+			return drop;
 		}
 
 		// either no world border integration or no border defined
+		/*
+		 * Try to get a wild spawn location but take whatever after 100
+		 * iterations
+		 */
+		if (config.isTownyEnabled()) {
+			for (int i = 0; i < 100; i++) {
+				drop = randomXZ(config, worldname, maxRange);
+
+				if (config.getTowny().isWild(new Location(config.getServer().getWorld(worldname), drop[0], 0, drop[1])))
+					break;
+			}
+		} else {
+
+			drop = randomXZ(config, worldname, maxRange);
+		}
+		return drop;
+	}
+
+	private static double[] randomXZ(PluginConfig config, String worldname, int maxRange) {
+		double[] drop;
 		drop = new double[2];
 		Location l = config.getServer().getWorld(worldname).getSpawnLocation();
 		int minx = (int) (l.getX() - maxRange);
 		int minz = (int) (l.getZ() - maxRange);
 		drop[0] = config.getRandom().nextInt(maxRange) + minx;
 		drop[1] = config.getRandom().nextInt(maxRange) + minz;
-
 		return drop;
 	}
 
@@ -184,6 +215,7 @@ public class Utils {
 		}
 		player.openInventory(inv);
 	}
+
 	public static int gemCount(Player p, GemModel gemModel) {
 		int gems = 0;
 		Inventory inv = p.getInventory();
@@ -196,7 +228,6 @@ public class Utils {
 		}
 		return gems;
 	}
-
 
 	public static boolean executeTrade(Player p, Trade trade, GemModel gemModel) {
 		int costToGo = trade.getCost();
@@ -238,9 +269,9 @@ public class Utils {
 		Inventory inv = pluginConfig.getServer().createInventory(null, 27, "Confirm Delete Trade?");
 		ItemStack ok = null;
 		ItemStack cancel = null;
-		//TODO: finish here
-		inv.setItem(2*9+2, ok);
-		inv.setItem(2*9+7, cancel);
+		// TODO: finish here
+		inv.setItem(2 * 9 + 2, ok);
+		inv.setItem(2 * 9 + 7, cancel);
 		p.openInventory(inv);
 	}
 

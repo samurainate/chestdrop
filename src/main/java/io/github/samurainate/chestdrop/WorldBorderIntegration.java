@@ -17,6 +17,14 @@ public class WorldBorderIntegration {
 		this.rand = config.getRandom();
 	}
 
+	public boolean worldHasBorder(String worldname) {
+		BorderData borderData = wbplugin.getWorldBorder(worldname);
+		if (borderData == null) {
+			return false;
+		}
+		return true;
+	}
+	
 	public double[] randomCoordWithinBordersOf(String worldname, int maxRange) {
 		BorderData borderData = wbplugin.getWorldBorder(worldname);
 		if (borderData == null) {

@@ -24,6 +24,8 @@ public class PluginConfig {
 	private Server server;
 	private Plugin plugin;
 	private GemModel gemModel;
+	private TownyIntegration towny;
+	private boolean isTownyEnabled;
 
 	public PluginConfig(ChestDropPlugin plugin) {
 		this.plugin = plugin;
@@ -94,18 +96,31 @@ public class PluginConfig {
 		}
 
 		/* Integrate with WorldBorder when available */
-		Plugin test = server.getPluginManager().getPlugin("WorldBorder");
-		if (test == null || !test.isEnabled()) {
+		Plugin wb = server.getPluginManager().getPlugin("WorldBorder");
+		if (wb == null || !wb.isEnabled()) {
 			// no world border
 		} else {
 			// load world border integration
 			try {
-				this.wb = new WorldBorderIntegration(this, test);
+				this.wb = new WorldBorderIntegration(this, wb);
 				this.isWorldBorderEnabled = true;
 			} finally {
 			}
 		}
 
+
+		/* Integrate with Towny when available */
+		Plugin towny = server.getPluginManager().getPlugin("Towny");
+		if (towny == null || !towny.isEnabled()) {
+			// no world border
+		} else {
+			// load world border integration
+			try {
+				this.towny = new TownyIntegration(this, towny);
+				this.isTownyEnabled = true;
+			} finally {
+			}
+		}
 	}
 
 	public Server getServer() {
@@ -167,6 +182,14 @@ public class PluginConfig {
 		configFile.set("trades." + tradeName, null);
 		plugin.saveConfig();
 		trades.remove(tradeName);
+	}
+
+	public boolean isTownyEnabled() {
+		return isTownyEnabled;
+	}
+
+	public TownyIntegration getTowny() {
+		return towny;
 	}
 
 }
