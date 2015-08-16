@@ -119,9 +119,9 @@ public class PluginConfig {
 		/* Integrate with Towny when available */
 		Plugin towny = server.getPluginManager().getPlugin("Towny");
 		if (towny == null || !towny.isEnabled()) {
-			// no world border
+			// no Towny integration
 		} else {
-			// load world border integration
+			// load Towny integration
 			try {
 				this.towny = new TownyIntegration(this, towny);
 				this.isTownyEnabled = true;
