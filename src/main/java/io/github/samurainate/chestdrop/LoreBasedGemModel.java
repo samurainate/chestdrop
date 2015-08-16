@@ -1,6 +1,5 @@
 package io.github.samurainate.chestdrop;
 
-import java.util.Arrays;
 import java.util.List;
 
 import org.bukkit.Material;

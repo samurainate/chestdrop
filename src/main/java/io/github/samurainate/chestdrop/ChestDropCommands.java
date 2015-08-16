@@ -4,6 +4,8 @@ import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 
 public class ChestDropCommands {
 
@@ -47,8 +49,9 @@ public class ChestDropCommands {
 					;
 				}
 			}
-			for (int i = 0; i < count; i++)
-				Utils.dropChest(pluginConfig, ((Player) sender).getWorld().getName());
+			DropChestsTask dropChestsTask = new DropChestsTask(pluginConfig, ((Player) sender).getWorld().getName(), count);
+			BukkitTask task=pluginConfig.getServer().getScheduler().runTaskTimer(pluginConfig.getPlugin(), dropChestsTask, 5, 20);
+			dropChestsTask.setTaskNum(task.getTaskId());
 			return true;
 		}
 		return false;

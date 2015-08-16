@@ -128,29 +128,65 @@ public class Utils {
 		for (y = world.getMaxHeight(); y > 0; y--) {
 			block = world.getBlockAt((int) coords[0], y - 1, (int) coords[1]);
 			switch (block.getType()) {
-			/* fall through air, water, leaves */
+			/* fall through air, water, leaves, other soft things */
 			case AIR:
 			case WATER:
 			case STATIONARY_WATER:
+			case ICE:
+			case SNOW:
 			case LEAVES:
+			case YELLOW_FLOWER:
+			case RED_ROSE:
+			case DEAD_BUSH:
+			case LONG_GRASS:
+			case DOUBLE_PLANT:
+			case SUGAR_CANE_BLOCK:
+			case MELON:
+			case PUMPKIN:
+			case WATER_LILY:
+			case JACK_O_LANTERN:
+			case LEAVES_2:
+			case SAPLING:
+			case VINE:
+			case WEB:
+			case BROWN_MUSHROOM:
+			case RED_MUSHROOM:
+			case CACTUS:
+			case COCOA:
 				continue;
-				/* shift so we don't land on or in trees */
+			/* shift so we don't land on or in trees (and other things) */
 			case LOG:
 			case LOG_2:
-				boolean axis = config.getRandom().nextBoolean();
-				boolean direction = config.getRandom().nextBoolean();
-				int a = axis ? 0 : 1;
-				int d = direction ? 1 : -1;
-				/* move one */
-				coords[a] += d;
-				/* start over */
-				loadChunk(world, coords);
-				y = world.getMaxHeight() + 1;
-				continue;
+			case CROPS:
+			case MELON_STEM:
+			case PUMPKIN_STEM:
+			/* Other denizens of Roofed Forest */
+			case HUGE_MUSHROOM_1:
+			case HUGE_MUSHROOM_2:
+			/* Village Roof */
+			case WOOD:
+			case WOOD_STAIRS:
+			/* Desert Temple */
+			case SANDSTONE:
+			case SANDSTONE_STAIRS:
+			/* Hot Stuff */
+			case FIRE:
 			case LAVA:
 			case STATIONARY_LAVA:
-				/* better luck next time */
-				return false;
+			/* Stuff I don't want to see a chest on top of */
+			case CARPET:
+			case SIGN:
+			case SIGN_POST:
+			case ARMOR_STAND:
+			case RAILS:
+			case ACTIVATOR_RAIL:
+			case DETECTOR_RAIL:
+			case POWERED_RAIL:
+			case REDSTONE_WIRE:
+			case DRAGON_EGG:
+			/* could be more here but I'll wait for complaints */
+				/* recurse */
+				return dropChest(config, worldname);
 			default:
 				break;
 			}
