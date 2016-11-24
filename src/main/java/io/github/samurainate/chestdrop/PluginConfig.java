@@ -69,6 +69,11 @@ public class PluginConfig {
 			for (String key : tradesConfig.getKeys(false)) {
 				ConfigurationSection tradeConfig = tradesConfig.getConfigurationSection(key);
 				ItemStack item = tradeConfig.getItemStack("item");
+				/* handle case of items that can't be instantiated */
+				if (item == null) {
+					server.getLogger().warning("[ChestDrop] Failed to load trade '" + key + "'.  Check your config, fix or remove this trade.");
+					continue;
+				} 
 				/* fix edge case that shouldn't happen anymore */
 				if (item.getType() == Material.AIR) {
 					toDelete = key;

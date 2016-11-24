@@ -10,8 +10,10 @@ import org.bukkit.scheduler.BukkitTask;
 public class ChestDropCommands {
 
 	public static boolean addTrade(CommandSender sender, String[] args, PluginConfig pluginConfig) {
-		if (sender instanceof Player && sender.hasPermission("chestdrop.addtrade") && (args.length >= 1)) {
+		if (sender instanceof Player && sender.hasPermission("chestdrop.addtrade")) {
 			try {
+				
+				if (args.length == 0) return false;
 				int cost = Integer.parseInt(args[0]);
 				ItemStack itemInHand = ((Player) sender).getItemInHand();
 				if (itemInHand.getType() == Material.AIR) {

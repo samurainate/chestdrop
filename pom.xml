@@ -56,14 +56,14 @@
     	<version>[1.8,]</version>
     </dependency>
     <dependency>
-    	<groupId>com.wimbli.WorldBorder</groupId>
+    	<groupId>com.wimbli</groupId>
     	<artifactId>WorldBorder</artifactId>
-    	<version>1.8.4</version>
+    	<version>1.8.6</version>
     </dependency>
     <dependency>
     	<groupId>com.palmergames</groupId>
     	<artifactId>Towny</artifactId>
-    	<version>0.89-2-0</version>
+    	<version>0.91.1.6</version>
     </dependency>
   </dependencies>
 </project>
